@@ -5,7 +5,7 @@ import { NODE_URL } from "../../config/config";
 import ShimmerPlaceholder from "./ShimmerPlaceholder";
 import { Trash, Pencil } from "lucide-react-native";
 import EditTaskPopUp from "./EditTaskPopUp";
-const ListTask = ({ user, setActiveIndex, type = "All" }) => {
+const TodayTask = ({ user, setActiveIndex }) => {
   const [list, setList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [taskStatuses, setTaskStatuses] = useState({});
@@ -23,29 +23,12 @@ const ListTask = ({ user, setActiveIndex, type = "All" }) => {
       });
       const data = await response.json();
       if (data.status) {
-        let filteredData = data.data;
-        if (type == "All") {
-          filteredData = data.data;
-        } else if (type === "Today") {
-          filteredData = data.data.filter(
-            (task) =>
-              new Date(task.date).toDateString() === new Date().toDateString()
-          );
-        } else if (type === "Completed") {
-          filteredData = data.data.filter(
-            (task) => task.progress === "Completed"
-          );
-        } else if (type === "In Progress") {
-          filteredData = data.data.filter(
-            (task) => task.progress === "In Progress"
-          );
-        } else if (type === "Not Started") {
-          filteredData = data.data.filter(
-            (task) => task.progress === "Not Started"
-          );
-        }
-        setList(filteredData);
+        const filteredData = data.data.filter(
+          (task) =>
+            new Date(task.date).toDateString() === new Date().toDateString()
+        );
 
+        setList(filteredData);
         const initialStatuses = {};
         filteredData.forEach((task) => {
           initialStatuses[task._id] = task.progress;
@@ -199,4 +182,4 @@ const ListTask = ({ user, setActiveIndex, type = "All" }) => {
   );
 };
 
-export default ListTask;
+export default TodayTask;

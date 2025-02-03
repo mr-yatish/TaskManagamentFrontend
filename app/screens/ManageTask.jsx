@@ -10,7 +10,15 @@ import {
   NativeScrollEvent,
 } from "react-native";
 import TaskBar from "./TaskBar";
-import { Calendar, User, Plus, ArrowLeft } from "lucide-react-native";
+import {
+  Calendar,
+  Plus,
+  ArrowLeft,
+  List,
+  CheckCheck,
+  CircleDashed,
+  CircleHelp,
+} from "lucide-react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NODE_URL } from "../../config/config";
@@ -18,11 +26,15 @@ import Toast from "react-native-toast-message";
 import ShimmerPlaceholder from "../components/ShimmerPlaceholder";
 import AddTask from "../components/AddTask";
 import ListTask from "../components/ListTask";
+import TodayTask from "../components/TodayTask";
 
 const subMenu = [
   { index: 0, title: "Today Task", icon: Calendar },
-  { index: 1, title: "Task List", icon: User },
+  { index: 1, title: "Task List", icon: List },
   { index: 2, title: "Add Task", icon: Plus },
+  { index: 3, title: "Completed", icon: CheckCheck },
+  { index: 4, title: "In Progress", icon: CircleDashed },
+  { index: 5, title: "Not Started", icon: CircleHelp },
 ];
 const ManageTask = () => {
   const [isLoading, setisLoading] = useState(true);
@@ -112,24 +124,11 @@ const ManageTask = () => {
     handleTabChange(activeIndex);
   }, [activeIndex]);
 
-  // Function to handle scroll direction and change activeIndex
-  const handleMomentumScrollEnd = (event) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const screenWidth = event.nativeEvent.layoutMeasurement.width;
-    
-    // Calculate the index based on the scroll position
-    const newIndex = Math.round(contentOffsetX / screenWidth);
-
-    if (newIndex !== activeIndex) {
-      setActiveIndex(newIndex);
-    }
-  };
-
   return (
     <ImageBackground
       source={{
         uri: "https://img.freepik.com/free-photo/background-gradient-lights_23-2149305014.jpg?t=st=1738569428~exp=1738573028~hmac=bf65579c917016ce6514251dc8e005bc4143e03d6089a16fa7c314dd6c9c6807&w=740",
-      }} 
+      }}
       style={{ flex: 1, justifyContent: "center" }}
       imageStyle={{ opacity: 0.6 }}
     >
@@ -148,7 +147,8 @@ const ManageTask = () => {
           {/* User Greeting */}
           <View className="p-4 my-6 px-6">
             <Text className="text-4xl text-gray-800">
-              Hello, <Text className="font-bold">{user?.name || "User"}!</Text> 👋
+              Hello, <Text className="font-bold">{user?.name || "User"}!</Text>{" "}
+              👋
             </Text>
             <Text className="text-lg text-gray-600 mt-3">
               Have a fantastic day!
@@ -192,25 +192,48 @@ const ManageTask = () => {
           </ScrollView>
 
           {/* Horizontal Scroll View to change tabs */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ flexDirection: "row" }}
-            onMomentumScrollEnd={handleMomentumScrollEnd}
-            scrollEventThrottle={1}
-            style={{ flex: 1,width: "100%" }}
+
+          <Animated.View
+            className="px-2"
+            style={{ opacity: fadeAnim, transform: [{ translateY }] }}
           >
-            <Animated.View
-              className="px-2 w-full"
-              style={{ opacity: fadeAnim, transform: [{ translateY }] }}
-            >
-              {activeIndex === 0 && (
-                <View className="h-40 bg-red-200 m-2 mt-4 rounded-lg w-full"></View>
-              )}
-              {activeIndex === 1 && <ListTask user={user?._id} />}
-              {activeIndex === 2 && <AddTask user={user?._id} />}
-            </Animated.View>
-          </ScrollView>
+            {activeIndex === 0 && (
+              <ListTask
+                user={user?._id}
+                setActiveIndex={setActiveIndex}
+                type="Today"
+              />
+            )}
+            {activeIndex === 1 && (
+              <ListTask
+                user={user?._id}
+                setActiveIndex={setActiveIndex}
+                type="All"
+              />
+            )}
+            {activeIndex === 2 && <AddTask user={user?._id} />}
+            {activeIndex === 3 && (
+              <ListTask
+                user={user?._id}
+                setActiveIndex={setActiveIndex}
+                type="Completed"
+              />
+            )}
+            {activeIndex === 4 && (
+              <ListTask
+                user={user?._id}
+                setActiveIndex={setActiveIndex}
+                type="In Progress"
+              />
+            )}
+            {activeIndex === 5 && (
+              <ListTask
+                user={user?._id}
+                setActiveIndex={setActiveIndex}
+                type="Not Started"
+              />
+            )}
+          </Animated.View>
         </ScrollView>
       ) : (
         <ScrollView className="w-full h-full mb-16 py-4 mt-10">
