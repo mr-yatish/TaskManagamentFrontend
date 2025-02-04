@@ -9,21 +9,32 @@ import {
   Pressable,
   TouchableWithoutFeedback,
   Image,
+  Platform,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import TaskBar from "./TaskBar";
-import { Calendar, User, ArrowLeft, Pen } from "lucide-react-native";
+import {
+  Calendar,
+  User,
+  ArrowLeft,
+  Pen,
+  Mail,
+  Pencil,
+} from "lucide-react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NODE_URL } from "../../config/config";
 import Toast from "react-native-toast-message";
 import ShimmerPlaceholder from "../components/ShimmerPlaceholder";
 const ProfileEdit = () => {
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [user, setUser] = useState({
     id: "",
     name: "",
     email: "",
     gender: "",
-    dob: "",
+    dateOfBirth: "",
     profileImage:
       "https://images.pexels.com/photos/1704488/pexels-photo-1704488.jpeg",
   });
@@ -33,7 +44,14 @@ const ProfileEdit = () => {
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [tempDate, setTempDate] = useState(new Date()); // For storing the selected date temporarily
   const [isLoading, setisLoading] = useState(false);
-
+  // Handle Date Change
+  const handleDateChange = (event, selectedDate) => {
+    if (event.type === "set" && selectedDate) {
+      setDate(selectedDate);
+      setUser({ ...user, dateOfBirth: selectedDate });
+    }
+    setShowDatePicker(false); // Close picker after selection
+  };
   useEffect(() => {
     setisLoading(true);
     const fetchUserDetails = async () => {
@@ -66,7 +84,10 @@ const ProfileEdit = () => {
 
       const data = await response.json();
       if (data.status) {
+        console.log("Retrived Data : ", data?.data);
+
         setUser(data?.data);
+        setDate(new Date(data?.data?.dateOfBirth));
       } else {
         Toast.show({
           type: "error",
@@ -105,6 +126,8 @@ const ProfileEdit = () => {
 
   // Handle Update Profile
   const handleUpdateProfile = async () => {
+    console.log(user);
+
     try {
       const response = await fetch(`${NODE_URL}/api/user/update`, {
         method: "POST",
@@ -187,7 +210,7 @@ const ProfileEdit = () => {
           </View>
 
           {/* First Name Input */}
-          <View className="mb-6">
+          <View className="mb-6 relative">
             <Text className="text-gray-700 mb-1">Name</Text>
             <TextInput
               value={user?.name}
@@ -195,10 +218,13 @@ const ProfileEdit = () => {
               placeholder="Enter your name"
               className="bg-gray-100 p-4 rounded-lg "
             />
+            <View className="absolute right-4 top-[65%] transform -translate-y-1/2">
+              <Pencil size={20} color="#9CA3AF" />
+            </View>
           </View>
 
           {/* Email Input */}
-          <View className="mb-6">
+          <View className="mb-6 ">
             <Text className="text-gray-700 mb-1">Email</Text>
             <TextInput
               value={user?.email}
@@ -207,6 +233,9 @@ const ProfileEdit = () => {
               keyboardType="email-address"
               className="bg-gray-100 p-4 rounded-lg "
             />
+            <View className="absolute right-4 top-[65%] transform -translate-y-1/2">
+              <Mail size={20} color="#9CA3AF" />
+            </View>
           </View>
 
           {/* Gender Selection */}
@@ -216,7 +245,7 @@ const ProfileEdit = () => {
               onPress={() => setGenderPickerVisible(true)}
               className="bg-gray-100 p-4 rounded-lg flex-row items-center justify-between"
             >
-              <Text className="text-gray-500">
+              <Text className="text-gray-700">
                 {user?.gender || "Select your gender"}
               </Text>
               <User size={20} color="#9CA3AF" />
@@ -227,14 +256,25 @@ const ProfileEdit = () => {
           <View className="mb-6">
             <Text className="text-gray-700 mb-1">Date of Birth</Text>
             <TouchableOpacity
-              onPress={() => setDatePickerVisible(true)} // Show DatePicker directly
+              onPress={() => setShowDatePicker(true)}
               className="bg-gray-100 p-4 rounded-lg flex-row items-center justify-between"
             >
-              <Text className="text-gray-500">
-                {user?.dob || "Select your date of birth"}
+              <Text className="text-gray-800 text-lg">
+                {date.toLocaleDateString()}
               </Text>
               <Calendar size={20} color="#9CA3AF" />
             </TouchableOpacity>
+
+            {/* Date Picker (Only Opens When Needed) */}
+            {showDatePicker && (
+              <DateTimePicker
+                value={date}
+                mode="date"
+                display={Platform.OS === "ios" ? "spinner" : "calendar"}
+                onChange={handleDateChange}
+                textColor="#000"
+              />
+            )}
           </View>
 
           {/* Update Button */}
@@ -242,7 +282,7 @@ const ProfileEdit = () => {
             onPress={() => {
               handleUpdateProfile();
             }}
-            className="bg-[#4338CA] p-4 rounded-lg items-center"
+            className="bg-[#4338CA] p-4 rounded-full items-center"
           >
             <Text className="text-white font-medium text-base">
               Update Profile
@@ -253,7 +293,7 @@ const ProfileEdit = () => {
             onPress={() => {
               handleLogout();
             }}
-            className="bg-red-400 mt-2 mb-10 p-4 rounded-lg items-center"
+            className="bg-red-400 mt-2 mb-10 p-4 rounded-full items-center"
           >
             <Text className="text-white font-medium text-base">Log Out</Text>
           </TouchableOpacity>

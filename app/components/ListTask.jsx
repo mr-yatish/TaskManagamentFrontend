@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import Toast from "react-native-toast-message";
 import { NODE_URL } from "../../config/config";
 import ShimmerPlaceholder from "./ShimmerPlaceholder";
@@ -115,7 +115,7 @@ const ListTask = ({ user, setActiveIndex, type = "All" }) => {
   return (
     <View className="p-4">
       {/* Loading Shimmer Effect */}
-      {isLoading && <ShimmerPlaceholder className="w-full h-24 rounded-lg" />}
+      {isLoading && <ActivityIndicator size="large" color="#4f46e5" />}
 
       {/* No Task Found */}
       {!isLoading && list.length === 0 && (
