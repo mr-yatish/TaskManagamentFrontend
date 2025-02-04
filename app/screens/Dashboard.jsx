@@ -9,23 +9,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
-import {
-  Search,
-  Minus,
-  Home,
-  Calendar,
-  CreditCard,
-  User,
-  Plus,
-  Paintbrush,
-  Flame,
-  Wrench,
-  LocateIcon,
-  TableOfContents,
-  Loader,
-  CircleDot,
-  Check,
-} from "lucide-react-native";
+import { Search, Plus, LocateIcon } from "lucide-react-native";
 import { router } from "expo-router";
 import TaskBar from "./TaskBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -43,7 +27,6 @@ const Dashboard = () => {
         }
 
         const parsedUser = JSON.parse(userDetails); // Parse the string back to JSON
-        console.log("Fetched User Details:", parsedUser); // Log parsed user details
         await fetchUserData(parsedUser?.id);
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -79,6 +62,7 @@ const Dashboard = () => {
   const isLargeScreen = width > 768;
   const services = [
     { icon: Plus, name: "Manage Task", url: "/screens/ManageTask" },
+    { icon: Plus, name: "Calculator", url: "/screens/Calculator" },
   ];
 
   return (
@@ -124,7 +108,7 @@ const Dashboard = () => {
           paddingBottom: 20,
         }}
       >
-        <View className="flex-row flex-wrap justify-between mt-5">
+        <View className="flex-row flex-wrap justify-start gap-3 mt-5">
           {services.map((service, index) => (
             <TouchableOpacity
               onPress={() => router.push(service.url)}
@@ -144,21 +128,6 @@ const Dashboard = () => {
             </TouchableOpacity>
           ))}
         </View>
-
-        <TouchableOpacity className="bg-white rounded-xl p-4 mb-6 shadow-sm shadow-black">
-          <View className="flex-row justify-between items-center">
-            <Text
-              className={`font-semibold ${
-                isLargeScreen ? "text-2xl" : "text-xl"
-              }`}
-            >
-              Home Care Scheduler
-            </Text>
-            <View className="bg-indigo-500 rounded-full p-2">
-              <Search size={isLargeScreen ? 24 : 20} color="white" />
-            </View>
-          </View>
-        </TouchableOpacity>
       </ScrollView>
 
       <TaskBar />

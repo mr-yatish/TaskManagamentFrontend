@@ -84,8 +84,6 @@ const ProfileEdit = () => {
 
       const data = await response.json();
       if (data.status) {
-        console.log("Retrived Data : ", data?.data);
-
         setUser(data?.data);
         setDate(new Date(data?.data?.dateOfBirth));
       } else {
@@ -126,8 +124,6 @@ const ProfileEdit = () => {
 
   // Handle Update Profile
   const handleUpdateProfile = async () => {
-    console.log(user);
-
     try {
       const response = await fetch(`${NODE_URL}/api/user/update`, {
         method: "POST",
@@ -282,7 +278,7 @@ const ProfileEdit = () => {
             onPress={() => {
               handleUpdateProfile();
             }}
-            className="bg-[#4338CA] p-4 rounded-full items-center"
+            className="bg-[#4338CA] p-4 rounded-t-2xl items-center"
           >
             <Text className="text-white font-medium text-base">
               Update Profile
@@ -290,10 +286,10 @@ const ProfileEdit = () => {
           </TouchableOpacity>
           {/* Log out Button */}
           <TouchableOpacity
-            onPress={() => {
+            onPress={() => {  
               handleLogout();
             }}
-            className="bg-red-400 mt-2 mb-10 p-4 rounded-full items-center"
+            className="bg-red-400 mt-2 mb-10 p-4 rounded-b-2xl items-center"
           >
             <Text className="text-white font-medium text-base">Log Out</Text>
           </TouchableOpacity>
