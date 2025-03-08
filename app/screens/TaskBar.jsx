@@ -5,10 +5,11 @@ import {
   useWindowDimensions,
 } from "react-native";
 import React, { useEffect } from "react";
-import { Home, CreditCard, User, Swords } from "lucide-react-native";
+import { Home, CreditCard, User, Swords,Bell } from "lucide-react-native";
 import { useRouter, usePathname } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
+
 const menu = [
   {
     name: "Home",
@@ -24,6 +25,11 @@ const menu = [
     name: "Payments",
     icon: CreditCard,
     route: "/screens/Payments",
+  },
+  {
+    name: "Notifications",
+    icon: Bell,
+    route: "/screens/Notifications",
   },
   {
     name: "Profile",

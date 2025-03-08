@@ -61,8 +61,7 @@ const Dashboard = () => {
   const { width, height } = useWindowDimensions();
   const isLargeScreen = width > 768;
   const services = [
-    { icon: Plus, name: "Manage Task", url: "/screens/ManageTask" },
-    { icon: Plus, name: "Calculator", url: "/screens/Calculator" },
+    { icon: Plus, name: "Manage Task", url: "/screens/ManageTask" }
   ];
 
   return (
